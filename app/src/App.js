@@ -1,26 +1,51 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { ApolloProvider } from "react-apollo";
+import ApolloClient from "apollo-boost";
+import { graphql, compose } from "react-apollo";
+import gql from "graphql-tag";
+import logo from "./logo.svg";
+import "./App.css";
+
+const client = new ApolloClient({
+  // TODO: via environment config
+  uri: "http://localhost:4000"
+});
+
+const QueryView = ({ data: { loading, feed } }) => (
+  <div>
+    {loading ? (
+      <div>loading...</div>
+    ) : (
+      feed.map(({ id, title }) => <div key={id}>{title}</div>)
+    )}
+  </div>
+);
+
+const QueryFeed = compose(
+  graphql(
+    gql`
+      query feed {
+        feed {
+          id
+          title
+        }
+      }
+    `
+  )
+)(QueryView);
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <ApolloProvider client={client}>
+        <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+
+            <QueryFeed />
+          </header>
+        </div>
+      </ApolloProvider>
     );
   }
 }
