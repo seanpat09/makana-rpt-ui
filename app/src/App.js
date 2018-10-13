@@ -1,14 +1,14 @@
-import React, { Fragment } from "react";
-import { ApolloProvider } from "react-apollo";
-import ApolloClient from "apollo-boost";
-import { graphql, compose } from "react-apollo";
-import gql from "graphql-tag";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { Fragment } from 'react';
+import { ApolloProvider } from 'react-apollo';
+import ApolloClient from 'apollo-boost';
+import { graphql, compose } from 'react-apollo';
+import gql from 'graphql-tag';
+import logo from './logo.svg';
+import './App.css';
 
 const client = new ApolloClient({
   // TODO: via environment config
-  uri: "http://localhost:4000"
+  uri: 'http://localhost:4000'
 });
 
 const ListPosts = ({ posts }) => (

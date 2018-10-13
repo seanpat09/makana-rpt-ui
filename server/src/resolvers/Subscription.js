@@ -5,14 +5,14 @@ const Subscription = {
         {
           where: {
             node: {
-              isPublished: true,
-            },
-          },
+              isPublished: true
+            }
+          }
         },
-        info,
-      )
-    },
-  },
-}
+        info
+      );
+    }
+  }
+};
 
-module.exports = { Subscription }
+module.exports = { Subscription };
