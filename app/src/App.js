@@ -11,16 +11,14 @@ const client = new ApolloClient({
   uri: 'http://localhost:4000'
 });
 
-const ListPosts = ({ posts }) => (
+const ListPosts = ({ comments }) => (
   <Fragment>
-    {posts.map(({ id, title }) => (
-      <h3 key={id}>{title}</h3>
-    ))}
+    {comments && comments.map(({ id, message }) => <h3 key={id}>{message}</h3>)}
   </Fragment>
 );
 
 const QueryView = ({ data: { loading, feed } }) => (
-  <div>{loading ? <div>loading...</div> : <ListPosts posts={feed} />}</div>
+  <div>{loading ? <div>loading...</div> : <ListPosts comments={feed} />}</div>
 );
 
 const QueryFeed = compose(
@@ -29,7 +27,7 @@ const QueryFeed = compose(
       query feed {
         feed {
           id
-          title
+          message
         }
       }
     `

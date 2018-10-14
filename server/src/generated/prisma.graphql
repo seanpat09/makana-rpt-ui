@@ -1,7 +1,7 @@
 # source: https://us1.prisma.sh/public-proudgoose-111/server/dev
-# timestamp: Sat Oct 13 2018 13:46:13 GMT-0600 (Mountain Daylight Time)
+# timestamp: Sat Oct 13 2018 15:34:00 GMT-0600 (Mountain Daylight Time)
 
-type AggregatePost {
+type AggregateComment {
   count: Int!
 }
 
@@ -14,143 +14,95 @@ type BatchPayload {
   count: Long!
 }
 
-scalar DateTime
-
-"""
-The `Long` scalar type represents non-fractional signed whole numeric values.
-Long can represent values between -(2^63) and 2^63 - 1.
-"""
-scalar Long
-
-type Mutation {
-  createPost(data: PostCreateInput!): Post!
-  createUser(data: UserCreateInput!): User!
-  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  deletePost(where: PostWhereUniqueInput!): Post
-  deleteUser(where: UserWhereUniqueInput!): User
-  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  updateManyPosts(data: PostUpdateInput!, where: PostWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
-  deleteManyPosts(where: PostWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
-}
-
-enum MutationType {
-  CREATED
-  UPDATED
-  DELETED
-}
-
-"""An object with an ID"""
-interface Node {
-  """The id of the object."""
-  id: ID!
-}
-
-"""Information about pagination in a connection."""
-type PageInfo {
-  """When paginating forwards, are there more items?"""
-  hasNextPage: Boolean!
-
-  """When paginating backwards, are there more items?"""
-  hasPreviousPage: Boolean!
-
-  """When paginating backwards, the cursor to continue."""
-  startCursor: String
-
-  """When paginating forwards, the cursor to continue."""
-  endCursor: String
-}
-
-type Post implements Node {
+type Comment implements Node {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  isPublished: Boolean!
-  title: String!
-  text: String!
+  isPublic: Boolean!
+  message: String!
   author: User!
+  replies(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
 
 """A connection to a list of items."""
-type PostConnection {
+type CommentConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [PostEdge]!
-  aggregate: AggregatePost!
+  edges: [CommentEdge]!
+  aggregate: AggregateComment!
 }
 
-input PostCreateInput {
-  isPublished: Boolean
-  title: String!
-  text: String!
-  author: UserCreateOneWithoutPostsInput!
+input CommentCreateInput {
+  isPublic: Boolean
+  message: String!
+  author: UserCreateOneWithoutCommentsInput!
+  replies: CommentCreateManyInput
 }
 
-input PostCreateManyWithoutAuthorInput {
-  create: [PostCreateWithoutAuthorInput!]
-  connect: [PostWhereUniqueInput!]
+input CommentCreateManyInput {
+  create: [CommentCreateInput!]
+  connect: [CommentWhereUniqueInput!]
 }
 
-input PostCreateWithoutAuthorInput {
-  isPublished: Boolean
-  title: String!
-  text: String!
+input CommentCreateManyWithoutAuthorInput {
+  create: [CommentCreateWithoutAuthorInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateWithoutAuthorInput {
+  isPublic: Boolean
+  message: String!
+  replies: CommentCreateManyInput
 }
 
 """An edge in a connection."""
-type PostEdge {
+type CommentEdge {
   """The item at the end of the edge."""
-  node: Post!
+  node: Comment!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum PostOrderByInput {
+enum CommentOrderByInput {
   id_ASC
   id_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
   updatedAt_DESC
-  isPublished_ASC
-  isPublished_DESC
-  title_ASC
-  title_DESC
-  text_ASC
-  text_DESC
+  isPublic_ASC
+  isPublic_DESC
+  message_ASC
+  message_DESC
 }
 
-type PostPreviousValues {
+type CommentPreviousValues {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  isPublished: Boolean!
-  title: String!
-  text: String!
+  isPublic: Boolean!
+  message: String!
 }
 
-type PostSubscriptionPayload {
+type CommentSubscriptionPayload {
   mutation: MutationType!
-  node: Post
+  node: Comment
   updatedFields: [String!]
-  previousValues: PostPreviousValues
+  previousValues: CommentPreviousValues
 }
 
-input PostSubscriptionWhereInput {
+input CommentSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [PostSubscriptionWhereInput!]
+  AND: [CommentSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [PostSubscriptionWhereInput!]
+  OR: [CommentSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [PostSubscriptionWhereInput!]
+  NOT: [CommentSubscriptionWhereInput!]
 
   """
   The subscription event gets dispatched when it's listed in mutation_in
@@ -171,51 +123,78 @@ input PostSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: PostWhereInput
+  node: CommentWhereInput
 }
 
-input PostUpdateInput {
-  isPublished: Boolean
-  title: String
-  text: String
-  author: UserUpdateOneRequiredWithoutPostsInput
+input CommentUpdateDataInput {
+  isPublic: Boolean
+  message: String
+  author: UserUpdateOneRequiredWithoutCommentsInput
+  replies: CommentUpdateManyInput
 }
 
-input PostUpdateManyWithoutAuthorInput {
-  create: [PostCreateWithoutAuthorInput!]
-  connect: [PostWhereUniqueInput!]
-  disconnect: [PostWhereUniqueInput!]
-  delete: [PostWhereUniqueInput!]
-  update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
-  upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
+input CommentUpdateInput {
+  isPublic: Boolean
+  message: String
+  author: UserUpdateOneRequiredWithoutCommentsInput
+  replies: CommentUpdateManyInput
 }
 
-input PostUpdateWithoutAuthorDataInput {
-  isPublished: Boolean
-  title: String
-  text: String
+input CommentUpdateManyInput {
+  create: [CommentCreateInput!]
+  connect: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  delete: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueNestedInput!]
+  upsert: [CommentUpsertWithWhereUniqueNestedInput!]
 }
 
-input PostUpdateWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput!
-  data: PostUpdateWithoutAuthorDataInput!
+input CommentUpdateManyWithoutAuthorInput {
+  create: [CommentCreateWithoutAuthorInput!]
+  connect: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  delete: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
-input PostUpsertWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput!
-  update: PostUpdateWithoutAuthorDataInput!
-  create: PostCreateWithoutAuthorInput!
+input CommentUpdateWithoutAuthorDataInput {
+  isPublic: Boolean
+  message: String
+  replies: CommentUpdateManyInput
 }
 
-input PostWhereInput {
+input CommentUpdateWithWhereUniqueNestedInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateDataInput!
+}
+
+input CommentUpdateWithWhereUniqueWithoutAuthorInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutAuthorDataInput!
+}
+
+input CommentUpsertWithWhereUniqueNestedInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateDataInput!
+  create: CommentCreateInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutAuthorInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutAuthorDataInput!
+  create: CommentCreateWithoutAuthorInput!
+}
+
+input CommentWhereInput {
   """Logical AND on all given filters."""
-  AND: [PostWhereInput!]
+  AND: [CommentWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [PostWhereInput!]
+  OR: [CommentWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [PostWhereInput!]
+  NOT: [CommentWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -300,104 +279,117 @@ input PostWhereInput {
 
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
-  isPublished: Boolean
+  isPublic: Boolean
 
   """All values that are not equal to given value."""
-  isPublished_not: Boolean
-  title: String
+  isPublic_not: Boolean
+  message: String
 
   """All values that are not equal to given value."""
-  title_not: String
+  message_not: String
 
   """All values that are contained in given list."""
-  title_in: [String!]
+  message_in: [String!]
 
   """All values that are not contained in given list."""
-  title_not_in: [String!]
+  message_not_in: [String!]
 
   """All values less than the given value."""
-  title_lt: String
+  message_lt: String
 
   """All values less than or equal the given value."""
-  title_lte: String
+  message_lte: String
 
   """All values greater than the given value."""
-  title_gt: String
+  message_gt: String
 
   """All values greater than or equal the given value."""
-  title_gte: String
+  message_gte: String
 
   """All values containing the given string."""
-  title_contains: String
+  message_contains: String
 
   """All values not containing the given string."""
-  title_not_contains: String
+  message_not_contains: String
 
   """All values starting with the given string."""
-  title_starts_with: String
+  message_starts_with: String
 
   """All values not starting with the given string."""
-  title_not_starts_with: String
+  message_not_starts_with: String
 
   """All values ending with the given string."""
-  title_ends_with: String
+  message_ends_with: String
 
   """All values not ending with the given string."""
-  title_not_ends_with: String
-  text: String
-
-  """All values that are not equal to given value."""
-  text_not: String
-
-  """All values that are contained in given list."""
-  text_in: [String!]
-
-  """All values that are not contained in given list."""
-  text_not_in: [String!]
-
-  """All values less than the given value."""
-  text_lt: String
-
-  """All values less than or equal the given value."""
-  text_lte: String
-
-  """All values greater than the given value."""
-  text_gt: String
-
-  """All values greater than or equal the given value."""
-  text_gte: String
-
-  """All values containing the given string."""
-  text_contains: String
-
-  """All values not containing the given string."""
-  text_not_contains: String
-
-  """All values starting with the given string."""
-  text_starts_with: String
-
-  """All values not starting with the given string."""
-  text_not_starts_with: String
-
-  """All values ending with the given string."""
-  text_ends_with: String
-
-  """All values not ending with the given string."""
-  text_not_ends_with: String
+  message_not_ends_with: String
   author: UserWhereInput
+  replies_every: CommentWhereInput
+  replies_some: CommentWhereInput
+  replies_none: CommentWhereInput
 }
 
-input PostWhereUniqueInput {
+input CommentWhereUniqueInput {
   id: ID
 }
 
+scalar DateTime
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  createComment(data: CommentCreateInput!): Comment!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteComment(where: CommentWhereUniqueInput!): Comment
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyComments(data: CommentUpdateInput!, where: CommentWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyComments(where: CommentWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
 type Query {
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  post(where: PostWhereUniqueInput!): Post
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
   user(where: UserWhereUniqueInput!): User
-  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
+  comment(where: CommentWhereUniqueInput!): Comment
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -407,8 +399,8 @@ type Query {
 }
 
 type Subscription {
-  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
 }
 
 type User implements Node {
@@ -416,7 +408,7 @@ type User implements Node {
   email: String!
   password: String!
   name: String!
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
 
 """A connection to a list of items."""
@@ -433,15 +425,15 @@ input UserCreateInput {
   email: String!
   password: String!
   name: String!
-  posts: PostCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutAuthorInput
 }
 
-input UserCreateOneWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
+input UserCreateOneWithoutCommentsInput {
+  create: UserCreateWithoutCommentsInput
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutPostsInput {
+input UserCreateWithoutCommentsInput {
   email: String!
   password: String!
   name: String!
@@ -521,25 +513,25 @@ input UserUpdateInput {
   email: String
   password: String
   name: String
-  posts: PostUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutAuthorInput
 }
 
-input UserUpdateOneRequiredWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
+input UserUpdateOneRequiredWithoutCommentsInput {
+  create: UserCreateWithoutCommentsInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutPostsDataInput
-  upsert: UserUpsertWithoutPostsInput
+  update: UserUpdateWithoutCommentsDataInput
+  upsert: UserUpsertWithoutCommentsInput
 }
 
-input UserUpdateWithoutPostsDataInput {
+input UserUpdateWithoutCommentsDataInput {
   email: String
   password: String
   name: String
 }
 
-input UserUpsertWithoutPostsInput {
-  update: UserUpdateWithoutPostsDataInput!
-  create: UserCreateWithoutPostsInput!
+input UserUpsertWithoutCommentsInput {
+  update: UserUpdateWithoutCommentsDataInput!
+  create: UserCreateWithoutCommentsInput!
 }
 
 input UserWhereInput {
@@ -711,9 +703,9 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   name_not_ends_with: String
-  posts_every: PostWhereInput
-  posts_some: PostWhereInput
-  posts_none: PostWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
 }
 
 input UserWhereUniqueInput {

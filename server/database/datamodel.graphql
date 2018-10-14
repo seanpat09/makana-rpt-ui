@@ -1,11 +1,11 @@
-type Post {
+type Comment {
   id: ID! @unique
   createdAt: DateTime!
   updatedAt: DateTime!
-  isPublished: Boolean! @default(value: "false")
-  title: String!
-  text: String!
+  isPublic: Boolean! @default(value: "false")
+  message: String!
   author: User!
+  replies: [Comment!]!
 }
 
 type User {
@@ -13,5 +13,5 @@ type User {
   email: String! @unique
   password: String!
   name: String!
-  posts: [Post!]!
+  comments: [Comment!]!
 }

@@ -2,24 +2,24 @@ const { getUserId } = require('../utils');
 
 const Query = {
   feed(parent, args, ctx, info) {
-    return ctx.db.query.posts({ where: { isPublished: true } }, info);
+    return ctx.db.query.comments({ where: { isPublic: true } }, info);
   },
 
-  drafts(parent, args, ctx, info) {
-    const id = getUserId(ctx);
+  // drafts(parent, args, ctx, info) {
+  //   const id = getUserId(ctx);
 
-    const where = {
-      isPublished: false,
-      author: {
-        id
-      }
-    };
+  //   const where = {
+  //     isPublished: false,
+  //     author: {
+  //       id
+  //     }
+  //   };
 
-    return ctx.db.query.posts({ where }, info);
-  },
+  //   return ctx.db.query.posts({ where }, info);
+  // },
 
-  post(parent, { id }, ctx, info) {
-    return ctx.db.query.post({ where: { id } }, info);
+  comment(parent, { id }, ctx, info) {
+    return ctx.db.query.comment({ where: { id } }, info);
   },
 
   me(parent, args, ctx, info) {

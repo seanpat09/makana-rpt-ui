@@ -1,11 +1,11 @@
 const Subscription = {
   feedSubscription: {
     subscribe: (parent, args, ctx, info) => {
-      return ctx.db.subscription.post(
+      return ctx.db.subscription.comment(
         {
           where: {
             node: {
-              isPublished: true
+              isPublic: true
             }
           }
         },
