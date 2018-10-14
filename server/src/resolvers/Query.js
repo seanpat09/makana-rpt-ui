@@ -2,7 +2,10 @@ const { getUserId } = require('../utils');
 
 const Query = {
   feed(parent, args, ctx, info) {
-    return ctx.db.query.comments({ where: { isPublic: true } }, info);
+    return ctx.db.query.comments(
+      { where: { AND: [{ isPublic: true }, { parent: null }] } },
+      info
+    );
   },
 
   // drafts(parent, args, ctx, info) {
