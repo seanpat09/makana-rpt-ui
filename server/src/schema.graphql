@@ -10,7 +10,11 @@ type Query {
 type Mutation {
   signup(email: String!, password: String!, name: String!): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
-  createComment(message: String!, isPublic: Boolean!): Comment!
+  createComment(
+    message: String!
+    isPublic: Boolean!
+    parentCommentId: ID
+  ): Comment!
   deleteComment(id: ID!): Comment!
   # createDraft(title: String!, text: String!): Post!
   # publish(id: ID!): Post!

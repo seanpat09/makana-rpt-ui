@@ -5,7 +5,8 @@ type Comment {
   isPublic: Boolean! @default(value: "false")
   message: String!
   author: User!
-  replies: [Comment!]!
+  parent: Comment @relation(name: "CommentOnComment")
+  children: [Comment!]! @relation(name: "CommentOnComment", onDelete: CASCADE)
 }
 
 type User {

@@ -1,17 +1,27 @@
 const { getUserId } = require('../../utils');
 
 const comment = {
-  async createComment(parent, { message, isPublic }, ctx, info) {
+  async createComment(
+    parent,
+    { message, isPublic, parentCommentId },
+    ctx,
+    info
+  ) {
     const userId = getUserId(ctx);
+
+    const parentConnect = parentCommentId
+      ? {
+          connect: { id: parentCommentId }
+        }
+      : {};
 
     return ctx.db.mutation.createComment(
       {
         data: {
           message,
           isPublic,
-          author: {
-            connect: { id: userId }
-          }
+          parent: parentConnect,
+          author: { connect: { id: userId } }
         }
       },
       info

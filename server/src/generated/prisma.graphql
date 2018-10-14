@@ -1,5 +1,5 @@
-# source: https://us1.prisma.sh/public-proudgoose-111/server/dev
-# timestamp: Sat Oct 13 2018 15:34:00 GMT-0600 (Mountain Daylight Time)
+# source: https://us1.prisma.sh/public-graveldevourer-868/graphql-boilerplate/dev
+# timestamp: Sun Oct 14 2018 11:58:48 GMT-0600 (Mountain Daylight Time)
 
 type AggregateComment {
   count: Int!
@@ -21,7 +21,8 @@ type Comment implements Node {
   isPublic: Boolean!
   message: String!
   author: User!
-  replies(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  parent: Comment
+  children(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
 
 """A connection to a list of items."""
@@ -38,12 +39,8 @@ input CommentCreateInput {
   isPublic: Boolean
   message: String!
   author: UserCreateOneWithoutCommentsInput!
-  replies: CommentCreateManyInput
-}
-
-input CommentCreateManyInput {
-  create: [CommentCreateInput!]
-  connect: [CommentWhereUniqueInput!]
+  parent: CommentCreateOneWithoutChildrenInput
+  children: CommentCreateManyWithoutParentInput
 }
 
 input CommentCreateManyWithoutAuthorInput {
@@ -51,10 +48,35 @@ input CommentCreateManyWithoutAuthorInput {
   connect: [CommentWhereUniqueInput!]
 }
 
+input CommentCreateManyWithoutParentInput {
+  create: [CommentCreateWithoutParentInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateOneWithoutChildrenInput {
+  create: CommentCreateWithoutChildrenInput
+  connect: CommentWhereUniqueInput
+}
+
 input CommentCreateWithoutAuthorInput {
   isPublic: Boolean
   message: String!
-  replies: CommentCreateManyInput
+  parent: CommentCreateOneWithoutChildrenInput
+  children: CommentCreateManyWithoutParentInput
+}
+
+input CommentCreateWithoutChildrenInput {
+  isPublic: Boolean
+  message: String!
+  author: UserCreateOneWithoutCommentsInput!
+  parent: CommentCreateOneWithoutChildrenInput
+}
+
+input CommentCreateWithoutParentInput {
+  isPublic: Boolean
+  message: String!
+  author: UserCreateOneWithoutCommentsInput!
+  children: CommentCreateManyWithoutParentInput
 }
 
 """An edge in a connection."""
@@ -126,27 +148,12 @@ input CommentSubscriptionWhereInput {
   node: CommentWhereInput
 }
 
-input CommentUpdateDataInput {
-  isPublic: Boolean
-  message: String
-  author: UserUpdateOneRequiredWithoutCommentsInput
-  replies: CommentUpdateManyInput
-}
-
 input CommentUpdateInput {
   isPublic: Boolean
   message: String
   author: UserUpdateOneRequiredWithoutCommentsInput
-  replies: CommentUpdateManyInput
-}
-
-input CommentUpdateManyInput {
-  create: [CommentCreateInput!]
-  connect: [CommentWhereUniqueInput!]
-  disconnect: [CommentWhereUniqueInput!]
-  delete: [CommentWhereUniqueInput!]
-  update: [CommentUpdateWithWhereUniqueNestedInput!]
-  upsert: [CommentUpsertWithWhereUniqueNestedInput!]
+  parent: CommentUpdateOneWithoutChildrenInput
+  children: CommentUpdateManyWithoutParentInput
 }
 
 input CommentUpdateManyWithoutAuthorInput {
@@ -158,15 +165,43 @@ input CommentUpdateManyWithoutAuthorInput {
   upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
+input CommentUpdateManyWithoutParentInput {
+  create: [CommentCreateWithoutParentInput!]
+  connect: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  delete: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutParentInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutParentInput!]
+}
+
+input CommentUpdateOneWithoutChildrenInput {
+  create: CommentCreateWithoutChildrenInput
+  connect: CommentWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: CommentUpdateWithoutChildrenDataInput
+  upsert: CommentUpsertWithoutChildrenInput
+}
+
 input CommentUpdateWithoutAuthorDataInput {
   isPublic: Boolean
   message: String
-  replies: CommentUpdateManyInput
+  parent: CommentUpdateOneWithoutChildrenInput
+  children: CommentUpdateManyWithoutParentInput
 }
 
-input CommentUpdateWithWhereUniqueNestedInput {
-  where: CommentWhereUniqueInput!
-  data: CommentUpdateDataInput!
+input CommentUpdateWithoutChildrenDataInput {
+  isPublic: Boolean
+  message: String
+  author: UserUpdateOneRequiredWithoutCommentsInput
+  parent: CommentUpdateOneWithoutChildrenInput
+}
+
+input CommentUpdateWithoutParentDataInput {
+  isPublic: Boolean
+  message: String
+  author: UserUpdateOneRequiredWithoutCommentsInput
+  children: CommentUpdateManyWithoutParentInput
 }
 
 input CommentUpdateWithWhereUniqueWithoutAuthorInput {
@@ -174,16 +209,26 @@ input CommentUpdateWithWhereUniqueWithoutAuthorInput {
   data: CommentUpdateWithoutAuthorDataInput!
 }
 
-input CommentUpsertWithWhereUniqueNestedInput {
+input CommentUpdateWithWhereUniqueWithoutParentInput {
   where: CommentWhereUniqueInput!
-  update: CommentUpdateDataInput!
-  create: CommentCreateInput!
+  data: CommentUpdateWithoutParentDataInput!
+}
+
+input CommentUpsertWithoutChildrenInput {
+  update: CommentUpdateWithoutChildrenDataInput!
+  create: CommentCreateWithoutChildrenInput!
 }
 
 input CommentUpsertWithWhereUniqueWithoutAuthorInput {
   where: CommentWhereUniqueInput!
   update: CommentUpdateWithoutAuthorDataInput!
   create: CommentCreateWithoutAuthorInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutParentInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutParentDataInput!
+  create: CommentCreateWithoutParentInput!
 }
 
 input CommentWhereInput {
@@ -324,9 +369,10 @@ input CommentWhereInput {
   """All values not ending with the given string."""
   message_not_ends_with: String
   author: UserWhereInput
-  replies_every: CommentWhereInput
-  replies_some: CommentWhereInput
-  replies_none: CommentWhereInput
+  parent: CommentWhereInput
+  children_every: CommentWhereInput
+  children_some: CommentWhereInput
+  children_none: CommentWhereInput
 }
 
 input CommentWhereUniqueInput {
@@ -342,18 +388,18 @@ Long can represent values between -(2^63) and 2^63 - 1.
 scalar Long
 
 type Mutation {
-  createUser(data: UserCreateInput!): User!
   createComment(data: CommentCreateInput!): Comment!
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  createUser(data: UserCreateInput!): User!
   updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
-  deleteUser(where: UserWhereUniqueInput!): User
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteComment(where: CommentWhereUniqueInput!): Comment
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  deleteUser(where: UserWhereUniqueInput!): User
   upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyComments(data: CommentUpdateInput!, where: CommentWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   deleteManyComments(where: CommentWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -384,12 +430,12 @@ type PageInfo {
 }
 
 type Query {
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
-  user(where: UserWhereUniqueInput!): User
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   comment(where: CommentWhereUniqueInput!): Comment
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  user(where: UserWhereUniqueInput!): User
   commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -399,8 +445,8 @@ type Query {
 }
 
 type Subscription {
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User implements Node {
