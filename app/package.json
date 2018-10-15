@@ -18,7 +18,8 @@
     "react-scripts": "2.0.4",
     "react-timeago": "^4.1.9",
     "recompose": "^0.30.0",
-    "subscriptions-transport-ws": "^0.9.15"
+    "subscriptions-transport-ws": "^0.9.15",
+    "typeface-roboto": "^0.0.54"
   },
   "scripts": {
     "start": "react-scripts start",
