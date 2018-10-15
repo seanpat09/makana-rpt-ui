@@ -1,5 +1,5 @@
 const { Query } = require('./Query');
-// const { Subscription } = require('./Subscription');
+const { Subscription } = require('./Subscription');
 const { auth } = require('./Mutation/auth');
 const { comment } = require('./Mutation/comment');
 const { AuthPayload } = require('./AuthPayload');
@@ -10,6 +10,6 @@ module.exports = {
     ...auth,
     ...comment
   },
-  // Subscription,
+  Subscription,
   AuthPayload
 };

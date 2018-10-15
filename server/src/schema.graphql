@@ -21,9 +21,9 @@ type Mutation {
   # deletePost(id: ID!): Post!
 }
 
-# type Subscription {
-#   feedSubscription: PostSubscriptionPayload!
-# }
+type Subscription {
+  feedSubscription: CommentSubscriptionPayload
+}
 
 type AuthPayload {
   token: String!
