@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import FeedData from '../containers/FeedData';
 import FeedSubscriptionData from '../containers/FeedSubscriptionData';
 import ListComments from './ListComments';
-import Comment from './Comment';
+import Notice from './Notice';
 
 const styles = theme => ({
   page: {
@@ -19,8 +19,9 @@ const enhanced = compose(withStyles(styles));
 export default enhanced(({ classes }) => (
   <div className={classes.page}>
     <FeedSubscriptionData>
-      {({ comment, loading }) => <Comment loading={loading} {...comment} />}
+      {props => <Notice {...props} />}
     </FeedSubscriptionData>
+
     <FeedData>{props => <ListComments {...props} />}</FeedData>
   </div>
 ));

@@ -17,10 +17,9 @@ const query = gql`
 
 const enhanced = compose(
   graphql(query),
-  withProps(({ data: { loading, feedSubscription } }) => ({
-    loading: loading,
-    comment: get(feedSubscription, 'node')
-  }))
+  withProps(({ data: { feedSubscription } }) =>
+    get(feedSubscription, 'node', {})
+  )
 );
 
 export default toRenderProps(enhanced);
