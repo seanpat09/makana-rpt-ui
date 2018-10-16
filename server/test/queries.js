@@ -31,4 +31,28 @@ const comment = id => `{
         }
       }`;
 
-module.exports = { createComment, comment, login };
+const deleteComment = id => `mutation {
+       deleteComment(id: "${id}"){
+           id
+       }
+      }`;
+
+const me = `{
+      me {
+          id
+          comments {
+              id
+              message
+          }
+        }
+      }`;
+
+const feed = `{
+       feed {
+            id
+            message
+            createdAt
+        }
+      }`;
+
+module.exports = { createComment, comment, deleteComment, login, me, feed };

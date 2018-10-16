@@ -126,6 +126,19 @@ describe('API Integration', () => {
     });
 
     describe('Anonymous', () => {
+      it('can not create comment', done => {
+        const message = `public message`;
+        const query = queries.createComment(message, 'true');
+
+        queryTest(query).end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body.errors[0].message).to.equal('Not authorized');
+
+          done();
+        });
+      });
+
       it('can query comment', done => {
         const query = queries.comment(publicComment.id);
 
@@ -144,7 +157,7 @@ describe('API Integration', () => {
         queryTest(query).end((err, res) => {
           if (err) return done(err);
 
-          expect(res.body.data.comment).to.be.null;
+          expect(res.body.errors[0].message).to.equal('Not authorized');
 
           done();
         });
@@ -157,25 +170,105 @@ describe('API Integration', () => {
       queryTest(query).end((err, res) => {
         if (err) return done(err);
 
-        expect(res.body.data.comment).to.be.null;
+        expect(res.body.errors[0].message).to.equal('Not authorized');
 
         done();
       });
     });
   });
 
-  it('me without token rejected', done => {
-    const query = `{
-      me {
-          id
-        }
-      }`;
+  describe('Me', () => {
+    it('rejected without token', done => {
+      const query = queries.me;
 
-    queryTest(query).end((err, res) => {
-      if (err) return done(err);
+      queryTest(query).end((err, res) => {
+        if (err) return done(err);
 
-      expect(res.body.errors[0].message).to.equal('Not authorized');
-      done();
+        expect(res.body.errors[0].message).to.equal('Not authorized');
+
+        done();
+      });
+    });
+
+    it('works with token', done => {
+      const query = queries.me;
+
+      queryTest(query, token).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.data.me.id).to.equal(user.id);
+        expect(res.body.data.me.comments).to.have.length.gte(1);
+
+        done();
+      });
+    });
+  });
+
+  describe('Feed', () => {
+    it('can fetch comment list anonymously', done => {
+      const query = queries.feed;
+
+      queryTest(query).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.data.feed).to.have.length.gte(1);
+
+        done();
+      });
+    });
+
+    it('can fetch comment list while logged in', done => {
+      const query = queries.feed;
+
+      queryTest(query, token).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.data.feed).to.have.length.gte(1);
+
+        done();
+      });
+    });
+  });
+
+  describe('Delete', () => {
+    it('can not delete if anonymous', done => {
+      const query = queries.deleteComment(publicComment.id);
+
+      queryTest(query).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.errors[0].message).to.equal('Not authorized');
+
+        done();
+      });
+    });
+
+    it('can delete if logged in', done => {
+      const query = queries.deleteComment(publicComment.id);
+
+      queryTest(query, token).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.data.deleteComment.id).to.equal(publicComment.id);
+
+        done();
+      });
+    });
+
+    it('can not delete bogus id', done => {
+      const query = queries.deleteComment('BOGUS');
+
+      queryTest(query, token).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.errors[0].message).to.equal(
+          "Comment not found or you're not the author"
+        );
+
+        done();
+      });
+
+      it.skip("can not delete another author's comment", done => {});
     });
   });
 });

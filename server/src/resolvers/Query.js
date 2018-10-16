@@ -11,24 +11,13 @@ const Query = {
     );
   },
 
-  // drafts(parent, args, ctx, info) {
-  //   const id = getUserId(ctx);
-
-  //   const where = {
-  //     isPublished: false,
-  //     author: {
-  //       id
-  //     }
-  //   };
-
-  //   return ctx.db.query.posts({ where }, info);
-  // },
-
   async comment(parent, { id }, ctx, info) {
     const userId = getUserIdOptional(ctx, true);
 
     if (userId === -1) {
+      // NOTE: hack given unique constraint query for `comment(id)`
       const canView = await ctx.db.exists.Comment({ id, isPublic: true });
+
       if (!canView) {
         throw new AuthError();
       }

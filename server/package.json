@@ -5,7 +5,7 @@
     "debug": "nodemon -e js,graphql -x node --inspect -r dotenv/config src/index.js",
     "playground": "graphql playground",
     "dev": "npm-run-all --parallel start playground",
-    "test": "mocha --bail test/*.test.js"
+    "test": "mocha --bail --timeout 5000 test/*.test.js"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",

@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/public-graveldevourer-868/graphql-boilerplate/dev
-# timestamp: Sun Oct 14 2018 11:58:48 GMT-0600 (Mountain Daylight Time)
+# timestamp: Tue Oct 16 2018 14:33:42 GMT-0600 (Mountain Daylight Time)
 
 type AggregateComment {
   count: Int!
@@ -21,8 +21,8 @@ type Comment implements Node {
   isPublic: Boolean!
   message: String!
   author: User!
-  parent: Comment
   children(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  parent: Comment
 }
 
 """A connection to a list of items."""
@@ -39,8 +39,8 @@ input CommentCreateInput {
   isPublic: Boolean
   message: String!
   author: UserCreateOneWithoutCommentsInput!
-  parent: CommentCreateOneWithoutChildrenInput
   children: CommentCreateManyWithoutParentInput
+  parent: CommentCreateOneWithoutChildrenInput
 }
 
 input CommentCreateManyWithoutAuthorInput {
@@ -61,8 +61,8 @@ input CommentCreateOneWithoutChildrenInput {
 input CommentCreateWithoutAuthorInput {
   isPublic: Boolean
   message: String!
-  parent: CommentCreateOneWithoutChildrenInput
   children: CommentCreateManyWithoutParentInput
+  parent: CommentCreateOneWithoutChildrenInput
 }
 
 input CommentCreateWithoutChildrenInput {
@@ -152,8 +152,8 @@ input CommentUpdateInput {
   isPublic: Boolean
   message: String
   author: UserUpdateOneRequiredWithoutCommentsInput
-  parent: CommentUpdateOneWithoutChildrenInput
   children: CommentUpdateManyWithoutParentInput
+  parent: CommentUpdateOneWithoutChildrenInput
 }
 
 input CommentUpdateManyWithoutAuthorInput {
@@ -186,8 +186,8 @@ input CommentUpdateOneWithoutChildrenInput {
 input CommentUpdateWithoutAuthorDataInput {
   isPublic: Boolean
   message: String
-  parent: CommentUpdateOneWithoutChildrenInput
   children: CommentUpdateManyWithoutParentInput
+  parent: CommentUpdateOneWithoutChildrenInput
 }
 
 input CommentUpdateWithoutChildrenDataInput {
@@ -369,10 +369,10 @@ input CommentWhereInput {
   """All values not ending with the given string."""
   message_not_ends_with: String
   author: UserWhereInput
-  parent: CommentWhereInput
   children_every: CommentWhereInput
   children_some: CommentWhereInput
   children_none: CommentWhereInput
+  parent: CommentWhereInput
 }
 
 input CommentWhereUniqueInput {
