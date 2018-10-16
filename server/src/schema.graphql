@@ -14,6 +14,7 @@ type Mutation {
     isPublic: Boolean!
     parentCommentId: ID
   ): Comment!
+  editComment(id: ID!, message: String, isPublic: Boolean): Comment!
   deleteComment(id: ID!): Comment!
 }
 

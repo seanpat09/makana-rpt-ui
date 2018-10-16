@@ -123,6 +123,22 @@ describe('API Integration', () => {
           done();
         });
       });
+
+      it('can edit comment', done => {
+        const newMessage = `edited the message! ${new Date().getTime()}`;
+        const query = queries.editComment(publicComment.id, {
+          message: newMessage,
+          isPublic: 'true'
+        });
+
+        queryTest(query, token).end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body.data.editComment.message).to.equal(newMessage);
+
+          done();
+        });
+      });
     });
 
     describe('Anonymous', () => {
@@ -269,6 +285,8 @@ describe('API Integration', () => {
       });
 
       it.skip("can not delete another author's comment", done => {});
+
+      it.skip('cascading delete down all threads', done => {});
     });
   });
 });

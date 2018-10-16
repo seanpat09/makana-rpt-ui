@@ -1,20 +1,20 @@
 const createComment = (message, public) => `
-     mutation {
+    mutation {
         createComment(message: "${message}", isPublic: ${public}){
-          id
-          createdAt
-          isPublic
-          message
-          author {
             id
-            name
-          }
+            createdAt
+            isPublic
+            message
+            author {
+                id
+                name
+            }
         }
-      }`;
+    }`;
 
 const login = (email, password) => `
     mutation {
-            login(email: "${email}", password: "${password}"){
+        login(email: "${email}", password: "${password}"){
             token
             user {
                 id
@@ -23,21 +23,33 @@ const login = (email, password) => `
         }
     }`;
 
-const comment = id => `{
+const comment = id => `
+    {
         comment(id: "${id}") {
           id
           message
           createdAt
         }
-      }`;
+    }`;
 
-const deleteComment = id => `mutation {
-       deleteComment(id: "${id}"){
+const deleteComment = id => `
+    mutation {
+        deleteComment(id: "${id}"){
            id
-       }
-      }`;
+        }
+    }`;
 
-const me = `{
+const editComment = (id, { message, isPublic }) => `
+    mutation {
+        editComment(id: "${id}", message: "${message}", isPublic: ${isPublic}){
+           id
+           message
+           isPublic
+        }
+    }`;
+
+const me = `
+    {
       me {
           id
           comments {
@@ -45,14 +57,23 @@ const me = `{
               message
           }
         }
-      }`;
+    }`;
 
-const feed = `{
+const feed = `
+    {
        feed {
             id
             message
             createdAt
         }
-      }`;
+    }`;
 
-module.exports = { createComment, comment, deleteComment, login, me, feed };
+module.exports = {
+  createComment,
+  comment,
+  editComment,
+  deleteComment,
+  login,
+  me,
+  feed
+};
