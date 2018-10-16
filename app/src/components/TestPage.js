@@ -8,6 +8,7 @@ import Notice from './Notice';
 
 const styles = theme => ({
   page: {
+    margin: theme.spacing.unit,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center'
