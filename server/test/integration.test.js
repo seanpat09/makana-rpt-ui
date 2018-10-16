@@ -7,18 +7,21 @@ const queryTest = query =>
   request
     .post('/')
     .send({
-      query: `{ ${query} }`
+      query
     })
     .expect(200);
 
 describe('GraphQL', () => {
+  let token;
+
   it('query valid comment', done => {
-    const query = `
+    const query = `{
         comment(id: "cjnawdli2trrj0b77jpjrbzbj") {
           id
           message
           createdAt
-        }`;
+        }
+      }`;
 
     const response = {
       data: {
@@ -39,10 +42,11 @@ describe('GraphQL', () => {
   });
 
   it('query invalid comment', done => {
-    const query = `
+    const query = `{
       comment(id: "bogus") {
           id
-        }`;
+        }
+      }`;
 
     const response = {
       data: {
@@ -59,10 +63,11 @@ describe('GraphQL', () => {
   });
 
   it('me without token rejected', done => {
-    const query = `
+    const query = `{
       me {
           id
-        }`;
+        }
+      }`;
 
     queryTest(query).end((err, res) => {
       if (err) return done(err);
@@ -70,5 +75,28 @@ describe('GraphQL', () => {
       expect(res.body.errors[0].message).to.equal('Not authorized');
       done();
     });
+  });
+
+  it('valid login credentials', done => {
+    const query = `
+      mutation {
+        login(email: "developer@example.com", password: "nooneknows"){
+          token
+          user {
+            name
+          }
+        }
+      }`;
+
+    queryTest(query).end((err, res) => {
+      if (err) return done(err);
+      expect(res.body.data.login.user.name).to.equal('Sarah');
+      token = res.body.data.login.token;
+      done();
+    });
+  });
+
+  it('got token', () => {
+    expect(token).to.not.be.undefined;
   });
 });
