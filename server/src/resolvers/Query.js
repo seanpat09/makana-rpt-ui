@@ -1,4 +1,4 @@
-const { getUserId } = require('../utils');
+const { getUserId, getUserIdOptional, AuthError } = require('../utils');
 
 const Query = {
   feed(parent, args, ctx, info) {
@@ -24,7 +24,16 @@ const Query = {
   //   return ctx.db.query.posts({ where }, info);
   // },
 
-  comment(parent, { id }, ctx, info) {
+  async comment(parent, { id }, ctx, info) {
+    const userId = getUserIdOptional(ctx, true);
+
+    if (userId === -1) {
+      const canView = await ctx.db.exists.Comment({ id, isPublic: true });
+      if (!canView) {
+        throw new AuthError();
+      }
+    }
+
     return ctx.db.query.comment({ where: { id } }, info);
   },
 

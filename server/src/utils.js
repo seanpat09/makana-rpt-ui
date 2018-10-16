@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-function getUserId(ctx) {
+function getUserId(ctx, optional = false) {
   const Authorization = ctx.request.get('Authorization');
   if (Authorization) {
     const token = Authorization.replace('Bearer ', '');
@@ -8,7 +8,15 @@ function getUserId(ctx) {
     return userId;
   }
 
-  throw new AuthError();
+  if (!optional) {
+    throw new AuthError();
+  }
+
+  return -1;
+}
+
+function getUserIdOptional(ctx) {
+  return getUserId(ctx, true);
 }
 
 class AuthError extends Error {
@@ -19,5 +27,6 @@ class AuthError extends Error {
 
 module.exports = {
   getUserId,
+  getUserIdOptional,
   AuthError
 };

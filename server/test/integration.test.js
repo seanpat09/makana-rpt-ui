@@ -2,63 +2,165 @@ const chai = require('chai');
 const expect = chai.expect;
 const url = `http://localhost:4000`;
 const request = require('supertest')(url);
+const queries = require('./queries');
 
-const queryTest = query =>
+const queryTest = (query, token = '') =>
   request
     .post('/')
+    .set(token.length > 0 ? { Authorization: `Bearer ${token}` } : {})
     .send({
       query
     })
     .expect(200);
 
-describe('GraphQL', () => {
+describe('API Integration', () => {
   let token;
+  let user;
+  let publicComment;
+  let privateComment;
 
-  it('query valid comment', done => {
-    const query = `{
-        comment(id: "cjnawdli2trrj0b77jpjrbzbj") {
-          id
-          message
-          createdAt
-        }
-      }`;
+  describe('Authentication', () => {
+    it('can login with valid credentials', done => {
+      const query = queries.login('developer@example.com', 'nooneknows');
 
-    const response = {
-      data: {
-        comment: {
-          id: 'cjnawdli2trrj0b77jpjrbzbj',
-          message: 'testing testing 1 2 3 4 5',
-          createdAt: '2018-10-15T22:55:55.418Z'
-        }
-      }
-    };
+      queryTest(query).end((err, res) => {
+        if (err) return done(err);
 
-    queryTest(query).end((err, res) => {
-      if (err) return done(err);
+        expect(res.body.data.login.user.name).to.equal('Sarah');
 
-      expect(res.body).to.have.deep.equals(response);
-      done();
+        token = res.body.data.login.token;
+        user = res.body.data.login.user;
+
+        done();
+      });
+    });
+
+    it('can not login with invalid credentials', done => {
+      const query = queries.login('FOO', 'BAR');
+
+      queryTest(query).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.data).to.be.null;
+
+        done();
+      });
+    });
+
+    it('can get token', () => {
+      expect(token).to.not.be.undefined;
     });
   });
 
-  it('query invalid comment', done => {
-    const query = `{
-      comment(id: "bogus") {
-          id
-        }
-      }`;
+  describe('Comments', () => {
+    describe('Logged In', () => {
+      it('can create public comment', done => {
+        const date = new Date();
+        const message = `public message: ${date.getTime()}`;
+        const query = queries.createComment(message, 'true');
 
-    const response = {
-      data: {
-        comment: null
-      }
-    };
+        queryTest(query, token).end((err, res) => {
+          if (err) return done(err);
 
-    queryTest(query).end((err, res) => {
-      if (err) return done(err);
+          const returnedComment = res.body.data.createComment;
 
-      expect(res.body).to.have.deep.equals(response);
-      done();
+          expect(returnedComment.isPublic).to.equal(true);
+          expect(returnedComment.author.id).to.equal(user.id);
+          expect(returnedComment.message).to.equal(message);
+          expect(
+            new Date(returnedComment.createdAt).getTime()
+          ).to.be.greaterThan(date.getTime());
+
+          publicComment = returnedComment;
+
+          done();
+        });
+      });
+
+      it('can create private comment', done => {
+        const date = new Date();
+        const message = `private message: ${date.getTime()}`;
+        const query = queries.createComment(message, 'false');
+
+        queryTest(query, token).end((err, res) => {
+          if (err) return done(err);
+
+          const returnedComment = res.body.data.createComment;
+
+          expect(returnedComment.isPublic).to.equal(false);
+          expect(returnedComment.author.id).to.equal(user.id);
+          expect(returnedComment.message).to.equal(message);
+          expect(
+            new Date(returnedComment.createdAt).getTime()
+          ).to.be.greaterThan(date.getTime());
+
+          privateComment = returnedComment;
+
+          done();
+        });
+      });
+
+      it('can query public comment', done => {
+        const query = queries.comment(publicComment.id);
+
+        queryTest(query, token).end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body.data.comment.id).to.equal(publicComment.id);
+
+          done();
+        });
+      });
+
+      it('can query private comment', done => {
+        const query = queries.comment(privateComment.id);
+
+        queryTest(query, token).end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body.data.comment.id).to.equal(privateComment.id);
+
+          done();
+        });
+      });
+    });
+
+    describe('Anonymous', () => {
+      it('can query comment', done => {
+        const query = queries.comment(publicComment.id);
+
+        queryTest(query).end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body.data.comment.id).to.equal(publicComment.id);
+
+          done();
+        });
+      });
+
+      it('can not query private comment', done => {
+        const query = queries.comment(privateComment.id);
+
+        queryTest(query).end((err, res) => {
+          if (err) return done(err);
+
+          expect(res.body.data.comment).to.be.null;
+
+          done();
+        });
+      });
+    });
+
+    it('can not query invalid comment', done => {
+      const query = queries.comment('BOGUS_ID');
+
+      queryTest(query).end((err, res) => {
+        if (err) return done(err);
+
+        expect(res.body.data.comment).to.be.null;
+
+        done();
+      });
     });
   });
 
@@ -75,28 +177,5 @@ describe('GraphQL', () => {
       expect(res.body.errors[0].message).to.equal('Not authorized');
       done();
     });
-  });
-
-  it('valid login credentials', done => {
-    const query = `
-      mutation {
-        login(email: "developer@example.com", password: "nooneknows"){
-          token
-          user {
-            name
-          }
-        }
-      }`;
-
-    queryTest(query).end((err, res) => {
-      if (err) return done(err);
-      expect(res.body.data.login.user.name).to.equal('Sarah');
-      token = res.body.data.login.token;
-      done();
-    });
-  });
-
-  it('got token', () => {
-    expect(token).to.not.be.undefined;
   });
 });
