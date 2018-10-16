@@ -1,8 +1,7 @@
-# import Post from "./generated/prisma.graphql"
+# import * from "./generated/prisma.graphql"
 
 type Query {
   feed: [Comment!]!
-  # drafts: [Post!]!
   comment(id: ID!): Comment
   me: User
 }
@@ -16,9 +15,6 @@ type Mutation {
     parentCommentId: ID
   ): Comment!
   deleteComment(id: ID!): Comment!
-  # createDraft(title: String!, text: String!): Post!
-  # publish(id: ID!): Post!
-  # deletePost(id: ID!): Post!
 }
 
 type Subscription {

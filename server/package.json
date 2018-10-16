@@ -4,13 +4,17 @@
     "start": "nodemon -e js,graphql -x node -r dotenv/config src/index.js",
     "debug": "nodemon -e js,graphql -x node --inspect -r dotenv/config src/index.js",
     "playground": "graphql playground",
-    "dev": "npm-run-all --parallel start playground"
+    "dev": "npm-run-all --parallel start playground",
+    "test": "mocha test/*.test.js"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
+    "chai": "^4.2.0",
     "graphql-yoga": "1.16.2",
     "jsonwebtoken": "8.3.0",
-    "prisma-binding": "2.1.6"
+    "mocha": "^5.2.0",
+    "prisma-binding": "2.1.6",
+    "supertest": "^3.3.0"
   },
   "devDependencies": {
     "dotenv": "6.1.0",
