@@ -139,6 +139,9 @@ describe('API Integration', () => {
           done();
         });
       });
+
+      it.skip('can not edit bogus comment', () => {});
+      it.skip("can not another author's comment", () => {});
     });
 
     describe('Anonymous', () => {

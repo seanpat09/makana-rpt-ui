@@ -9,17 +9,19 @@ const query = gql`
       node {
         id
         message
-        createdAt
+        updatedAt
       }
+      mutation
     }
   }
 `;
 
 const enhanced = compose(
   graphql(query),
-  withProps(({ data: { feedSubscription } }) =>
-    get(feedSubscription, 'node', {})
-  )
+  withProps(({ data: { feedSubscription } }) => ({
+    ...get(feedSubscription, 'node', {}),
+    type: get(feedSubscription, 'mutation')
+  }))
 );
 
 export default toRenderProps(enhanced);
