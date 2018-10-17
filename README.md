@@ -19,5 +19,5 @@ _convenience script to start server & app in parallel_
 
 ## Info
 
-- **App** bootstrapped with `create-react-app`
-- **Server** bootstrapped with `graphql-boilerplate`
+- **[App](./app/README.md)** bootstrapped with `create-react-app` 
+- **[Server](./server/README.md)** bootstrapped with `graphql-boilerplate` 
