@@ -61,6 +61,9 @@ Fully detailed schema can be viewed by running `yarn playground` in the `server`
 
 The above assumes the server is already running. Alternatively, execute `yarn dev` to bring up the server and playground in parallel.
 
+![schema inspector](https://user-images.githubusercontent.com/31106469/47105208-86e83d00-d200-11e8-8794-b5b14956599a.png)
+
+
 ##### Query
 
 - `feed` - list of top level comments
@@ -82,6 +85,8 @@ The above assumes the server is already running. Alternatively, execute `yarn de
 - Makes unauthenticated (anonymous) feed request
 - Subscribes to all comment updates, and displays via snackbar notice
   - Does **NOT** update feed list in real time (this is for you to complete)
+
+![Application](https://user-images.githubusercontent.com/31106469/47105298-c31b9d80-d200-11e8-82ea-df70358e37b8.png)
 
 ## Additional Info
 
