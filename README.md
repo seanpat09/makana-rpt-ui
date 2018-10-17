@@ -9,7 +9,7 @@
 
 _run once to setup project_
 
-`./init.js`
+`./init.sh`
 
 ### Startup
 
@@ -19,5 +19,5 @@ _convenience script to start server & app in parallel_
 
 ## Info
 
-- **[App](./app/README.md)** bootstrapped with `create-react-app` 
-- **[Server](./server/README.md)** bootstrapped with `graphql-boilerplate` 
+- **[App](./app/README.md)** bootstrapped with `create-react-app`
+- **[Server](./server/README.md)** bootstrapped with `graphql-boilerplate`
