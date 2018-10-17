@@ -1,5 +1,3 @@
-# Makana - UI Remote Programming Test
-
 ## Quick start guide
 
 ### Prerequisites
@@ -9,13 +7,13 @@
 
 ### Initialize
 
-_only run once to bootstrap project_
+_run once to setup project_
 
 `./init_project.js`
 
 ### Startup
 
-_convenience script to start server and app in parallel_
+_convenience script to start server & app in parallel_
 
 `./start.sh`
 
