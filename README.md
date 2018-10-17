@@ -6,9 +6,8 @@ Fork the repo and build out the remainder of the application to support the foll
 
 - User login and logout
 - View list of comments and replies
-- Private/public comment toggle
-  - Private comments only viewable to authenticated users
 - Add/edit/delete comments and replies
+  - Private/public comment toggle (Private comments only viewable to authenticated users)
 - Real-time (subscription) updates across users/sessions
 
 **Bonuses**
