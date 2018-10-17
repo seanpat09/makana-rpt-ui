@@ -1,5 +1,3 @@
-# Makana - UI Remote Programming Test
-
 ## Quick start guide
 
 ### Prerequisites
@@ -9,17 +7,17 @@
 
 ### Initialize
 
-_only run once to bootstrap project_
+_run once to setup project_
 
 `./init.js`
 
 ### Startup
 
-_convenience script to start server and app in parallel_
+_convenience script to start server & app in parallel_
 
 `./start.sh`
 
 ## Info
 
-- **App** bootstrapped with `create-react-app`
-- **Server** bootstrapped with `graphql-boilerplate`
+- **[App](./app/README.md)** bootstrapped with `create-react-app` 
+- **[Server](./server/README.md)** bootstrapped with `graphql-boilerplate` 
