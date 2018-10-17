@@ -57,7 +57,7 @@ _convenience script to start server & app in parallel_
 
 #### APIs
 
-Fully detailed schema can be viewed by running `yarn playground` in the `server` directory and visiting [http://localhost:3000/playground](playground). Then, click on the `schema` tab located at the right edge of the page.
+Fully detailed schema can be viewed by running `yarn playground` in the `server` directory and visiting [http://localhost:3001/playground](playground). Then, click on the `schema` tab located at the right edge of the page.
 
 The above assumes the server is already running. Alternatively, execute `yarn dev` to bring up the server and playground in parallel.
 
