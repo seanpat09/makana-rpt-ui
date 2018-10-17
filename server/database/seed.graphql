@@ -19,7 +19,7 @@ mutation {
           }
           { message: "Comment #2", isPublic: true }
           { message: "Testing testing 123", isPublic: true }
-          { message: "Hello World 👋", isPublic: false }
+          { message: "Private World", isPublic: false }
         ]
       }
     }

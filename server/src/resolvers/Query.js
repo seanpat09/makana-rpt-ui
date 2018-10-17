@@ -2,9 +2,16 @@ const { getUserId, getUserIdOptional, AuthError } = require('../utils');
 
 const Query = {
   feed(parent, args, ctx, info) {
+    const userId = getUserIdOptional(ctx, true);
+
+    const where =
+      userId === -1
+        ? { AND: [{ isPublic: true }, { parent: null }] }
+        : { parent: null };
+
     return ctx.db.query.comments(
       {
-        where: { AND: [{ isPublic: true }, { parent: null }] },
+        where,
         orderBy: 'createdAt_DESC'
       },
       info

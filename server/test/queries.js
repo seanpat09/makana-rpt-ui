@@ -78,6 +78,7 @@ const feed = `
             id
             message
             createdAt
+            isPublic
         }
     }`;
 

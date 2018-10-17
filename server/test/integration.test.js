@@ -1,27 +1,14 @@
 const chai = require('chai');
+const chaiSubset = require('chai-subset');
+chai.use(chaiSubset);
 const expect = chai.expect;
 const url = `http://localhost:4000`;
 const request = require('supertest')(url);
 const queries = require('./queries');
+const hash = require('object-hash').MD5;
 
+// TODO: move to .env config
 const password = 'nooneknows';
-
-const hash = function(s) {
-  var a = 1,
-    c = 0,
-    h,
-    o;
-  if (s) {
-    a = 0;
-    for (h = s.length - 1; h >= 0; h--) {
-      o = s.charCodeAt(h);
-      a = ((a << 6) & 268435455) + o + (o << 14);
-      c = a & 266338304;
-      a = c !== 0 ? a ^ (c >> 21) : a;
-    }
-  }
-  return String(a);
-};
 
 const queryTest = (query, token = '') =>
   request
@@ -40,7 +27,8 @@ describe('API Integration', () => {
 
   describe('Authentication', () => {
     it('can signup new user', done => {
-      const uniqueName = hash(new Date().getTime);
+      const time = new Date().getTime();
+      const uniqueName = hash(time);
       const email = `test-email-${uniqueName}@example.com`;
       const query = queries.signup(email, password, uniqueName);
 
@@ -259,25 +247,35 @@ describe('API Integration', () => {
   });
 
   describe('Feed', () => {
-    it('can fetch comment list anonymously', done => {
+    it('can fetch public comment list anonymously', done => {
       const query = queries.feed;
 
       queryTest(query).end((err, res) => {
         if (err) return done(err);
 
         expect(res.body.data.feed).to.have.length.gte(1);
+        expect(res.body.data.feed).to.not.containSubset([
+          {
+            isPublic: false
+          }
+        ]);
 
         done();
       });
     });
 
-    it('can fetch comment list while logged in', done => {
+    it('can see private comments when logged in', done => {
       const query = queries.feed;
 
       queryTest(query, token).end((err, res) => {
         if (err) return done(err);
 
         expect(res.body.data.feed).to.have.length.gte(1);
+        expect(res.body.data.feed).to.containSubset([
+          {
+            isPublic: false
+          }
+        ]);
 
         done();
       });
