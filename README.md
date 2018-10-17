@@ -11,7 +11,7 @@
 
 _only run once to bootstrap project_
 
-`./init_project.js`
+`./init.js`
 
 ### Startup
 
