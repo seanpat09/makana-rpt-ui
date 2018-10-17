@@ -9,7 +9,10 @@ const auth = {
     });
 
     return {
-      token: jwt.sign({ userId: user.id }, process.env.APP_SECRET),
+      token: jwt.sign(
+        { userId: user.id, name: user.name },
+        process.env.APP_SECRET
+      ),
       user
     };
   },

@@ -19,6 +19,19 @@ const login = (email, password) => `
             user {
                 id
                 name
+                email
+            }
+        }
+    }`;
+
+const signup = (email, password, name) => `
+    mutation {
+        signup(email: "${email}", password: "${password}", name: "${name}"){
+            token
+            user {
+                id
+                name
+                email
             }
         }
     }`;
@@ -73,6 +86,7 @@ module.exports = {
   comment,
   editComment,
   deleteComment,
+  signup,
   login,
   me,
   feed
