@@ -2,7 +2,7 @@ const { getUserId, getUserIdOptional, AuthError } = require('../utils');
 
 const Query = {
   feed(parent, args, ctx, info) {
-    const userId = getUserIdOptional(ctx, true);
+    const userId = getUserIdOptional(ctx);
 
     const where =
       userId === -1
@@ -19,7 +19,7 @@ const Query = {
   },
 
   async comment(parent, { id }, ctx, info) {
-    const userId = getUserIdOptional(ctx, true);
+    const userId = getUserIdOptional(ctx);
 
     if (userId === -1) {
       // NOTE: hack given unique constraint query for `comment(id)`
