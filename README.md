@@ -87,6 +87,12 @@ The above assumes the server is already running. Alternatively, execute `yarn de
 
 ![Application](https://user-images.githubusercontent.com/31106469/47105298-c31b9d80-d200-11e8-82ea-df70358e37b8.png)
 
+### Mobile RPT
+
+- Please use the starter project server
+- Write a native mobile iOS app using the server as the back end
+- Use the Apollo GraphQL native iOS client
+
 ## Additional Info
 
 See corresponding README for each service
