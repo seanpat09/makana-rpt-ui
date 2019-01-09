@@ -1,5 +1,5 @@
-# source: https://us1.prisma.sh/public-dustracer-988/makana-rpt-ui/dev
-# timestamp: Wed Nov 07 2018 11:32:20 GMT-0700 (Mountain Standard Time)
+# source: https://us1.prisma.sh/public-spotcowl-926/makana-rpt-ui/dev
+# timestamp: Wed Jan 09 2019 08:29:06 GMT-0700 (Mountain Standard Time)
 
 type AggregateComment {
   count: Int!
@@ -308,6 +308,7 @@ input CommentUpdateManyMutationInput {
 input CommentUpdateManyWithoutAuthorInput {
   create: [CommentCreateWithoutAuthorInput!]
   connect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
   disconnect: [CommentWhereUniqueInput!]
   delete: [CommentWhereUniqueInput!]
   update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
@@ -319,6 +320,7 @@ input CommentUpdateManyWithoutAuthorInput {
 input CommentUpdateManyWithoutParentInput {
   create: [CommentCreateWithoutParentInput!]
   connect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
   disconnect: [CommentWhereUniqueInput!]
   delete: [CommentWhereUniqueInput!]
   update: [CommentUpdateWithWhereUniqueWithoutParentInput!]
